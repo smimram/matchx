@@ -36,17 +36,21 @@ module Time = struct
     | _ -> failwith "invalid time %s" t
 end
 
+(** Timeslots. *)
 module Timeslot = struct
+  (** Timeslot for a course: period, day, starting and ending time. *)
   type t = Period.t * Day.t * Time.t * Time.t
 
+  (** Dummy timeslot. *)
   let dummy : t = -1, -1, 0., 0.
 
   let period (p,_,_,_) = p
 
+  (** Whether two timeslots overlap. *)
   let overlap ts1 ts2 =
     let p1, d1, s1, t1 = ts1 in
     let p2, d2, s2, t2 = ts2 in
     ts1 <> dummy && ts2 <> dummy
     && p1 = p2 && d1 = d2
-    && ((s1 <= s2 && s2 <= t1) || (s2 <= s1 && s1 <= t2))
+    && ((s1 <= s2 && s2 < t1) || (s2 <= s1 && s1 < t2))
 end
