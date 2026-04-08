@@ -1,6 +1,6 @@
 # Stable matching for X students in 3A
 
-This program is essentially an implementation of the [Gale-Shapely algorithm](https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm) for assigning X students to courses in 3 year, trying to adhere to students preferences while respecting numerus clausus for courses.
+This program is essentially an implementation of the [Gale-Shapely algorithm](https://en.wikipedia.org/wiki/Gale%E2%80%93Shapley_algorithm) for assigning X students to courses in 3rd year, trying to adhere to students preferences while respecting numerus clausus for courses.
 
 ## Design choices
 
