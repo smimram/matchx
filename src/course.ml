@@ -75,6 +75,7 @@ let load dir =
   (* Sort. *)
   db := List.sort compare !db;
   (* Print. *)
+  print_string "\n# Courses (with numerus clausus and ranking)\n\n";
   List.iter (fun c ->
       print @@ Printf.sprintf "- %s: %s" c.id (if c.nc = max_int then "-" else string_of_int c.nc);
       (match c.rank with None -> () | Some r -> print_string @@ " / " ^ r);

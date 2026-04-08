@@ -16,7 +16,9 @@ let () =
   print @@ Printf.sprintf "- %d PA\n%!" (PA.count ());
   print_newline ();
   let a = Assignation.compute () in
+  print_string "\n# Final assignation\n\n";
   print_endline @@ Assignation.Relation.to_string a;
+  print_string "\n# Sudents by course\n\n";
   print_endline @@ Assignation.Relation.to_string_by_course a;
   Assignation.check a;
   File.write "../output.csv" @@ Assignation.Relation.to_csv a

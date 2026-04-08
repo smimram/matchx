@@ -142,6 +142,7 @@ let load dir =
          pa.blocks <- block :: pa.blocks
     );
   (* Print the rules. *)
+  print_string "\n# Rules by PA\n\n";
   List.iter (fun pa ->
       print @@ Printf.sprintf "- %s\n" (to_string pa);
       for p = 1 to 2 do

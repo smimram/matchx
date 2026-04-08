@@ -89,6 +89,7 @@ let load dir =
   (* Sort. *)
   db := List.sort compare !db;
   (* Print. *)
+  print_string "\n# Students (with number of ranked courses)\n\n";
   List.iter (fun s ->
       let courses = s.choices |> List.map snd |> List.flatten |> List.length in
       print_string @@ Printf.sprintf "- %s: %d\n" (to_string s) courses;
