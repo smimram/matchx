@@ -111,32 +111,3 @@ let filter p = List.filter p @@ db ()
 (** Students who might choose a given course. *)
 let might_choose c =
   filter (fun s -> List.exists (fun (_,courses) -> List.mem c courses) s.choices) |> List.sort compare
-
-(*
-(** Generate the list of students to rank. *)
-let to_rank () =
-  print_endline "Generating lists of students to rank...";
-  Course.iter (fun c ->
-      if Course.has_numerus_clausus c then
-        let oc = open_out @@ Printf.sprintf "../torank/%s.csv" @@ Course.to_string c in
-        output_string oc "id,firstname,lastname,mail,pa,motivations\n";
-        List.iter (fun s ->
-            let motivations =
-              s.motivations
-              |> List.map (Re.replace ~all:true (Re.compile @@ Re.str "\"") ~f:(fun _ -> "\"\""))
-              |> List.map (Printf.sprintf "\"%s\"")
-              |> String.concat ","
-            in
-            output_string oc (
-              Printf.sprintf "%s,%s,%s,%s,%s,%s\n"
-                s.id
-                s.firstname
-                s.lastname
-                s.mail
-                (PA.to_string s.pa)
-                motivations
-            )
-          ) (might_choose c);
-        close_out oc
-    )
-*)
