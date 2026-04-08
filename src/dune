@@ -1,0 +1,4 @@
+(executable
+ (name matchx)
+ (libraries csv re)
+)
