@@ -16,6 +16,7 @@ module Block = struct
 
   let to_string b = b.id
 
+  (** Courses in the block. *)
   let courses b = b.courses
 
   (** Number of courses to be chosen in this block. *)

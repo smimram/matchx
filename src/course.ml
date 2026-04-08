@@ -13,6 +13,8 @@ let to_string c = c.id
 
 let has_numerus_clausus c = c.nc < max_int
 
+let numerus_clausus c = c.nc
+
 let period c = Timeslot.period c.course_timeslot
 
 let db = ref []

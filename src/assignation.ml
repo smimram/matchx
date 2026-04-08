@@ -35,8 +35,8 @@ module Relation = struct
 
   let empty () =
     {
-      slots = CourseMap.of_seq @@ List.to_seq @@ Course.map (fun c -> c, []);
       course = SlotMap.empty;
+      slots = CourseMap.of_seq @@ List.to_seq @@ Course.map (fun c -> c, []);
     }
 
   (** Course assigned to a slot. *)
@@ -60,6 +60,7 @@ module Relation = struct
   (** Remove a relation between a slot and a course. *)
   let remove rel s c =
     assert (course rel s = Some c);
+    assert (List.mem s @@ slots rel c);
     rel.course <- SlotMap.remove s rel.course;
     rel.slots <- CourseMap.add c (List.remove s @@ slots rel c) rel.slots
 
@@ -83,6 +84,15 @@ module Relation = struct
       )
     |> String.concat "\n"
 
+  let to_string_by_course rel =
+    Course.map
+      (fun c ->
+        let students = List.map Slot.student @@ slots rel c in
+        (* Printf.sprintf "- %s (%d%s): %s" (Course.to_string c) (List.length students) (if Course.has_numerus_clausus c then " / " ^ string_of_int (Course.numerus_clausus c) else "") (String.concat ", " @@ List.map Student.to_string students) *)
+        Printf.sprintf "- %s : %d%s" (Course.to_string c) (List.length students) (if Course.has_numerus_clausus c then " / " ^ string_of_int (Course.numerus_clausus c) else "")
+      )
+    |> String.concat "\n"
+
   let to_csv rel =
     Printf.sprintf "nom,prenom,id\n"
     ^
@@ -99,12 +109,13 @@ module Relation = struct
       )
 end
 
+(** This is the main function to compute assignations. *)
 let compute () =
   print_endline "Computing assignations...";
 
   (* Relation between slots and students. *)
   let rel = Relation.empty () in
-  (* List of remaining preferences for each slot. *)
+  (* Remaining preferences for each slot. This associates a queues of prefered courses (in order) for each slot. Two slots in the same block share the same queue (so that they will take different courses). *)
   let queues =
     Student.map
       (fun s ->
@@ -120,7 +131,7 @@ let compute () =
     |> List.flatten
     |> List.shuffle
   in
-  (* Unattributed slots. *)
+  (* Slots without an attributed course (yet). *)
   let single = Queue.of_list @@ List.map fst queues in
   (* Round count. *)
   let rounds = ref 0 in
@@ -168,7 +179,9 @@ let compute () =
     in
 
     if Queue.is_empty queue then warning "%s: no more choices in %s" (Student.to_string student) (Slot.to_string slot) else
+      (* Pick the prefered course for the slot. *)
       let course = Queue.pop queue in
+      (* Slots already assigned to this course. *)
       let already = Relation.slots rel course in
 
       (* Are we below the numerus clausus? *)
@@ -206,9 +219,12 @@ let compute () =
   info "%d drops" !drops;
   rel
 
+(** Check that the assignation makes sense. *)
 let check rel =
   Student.iter (fun st ->
+      (* Slots for the student. *)
       let slots = Relation.slots_of_student rel st in
+      (* Courses taken by the student. *)
       let courses = List.map (Relation.course rel) slots |> List.filter_map Fun.id in
 
       (* All slots are asssigned. *)
