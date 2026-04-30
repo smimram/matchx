@@ -130,7 +130,11 @@ let load dir =
          let block = row "bloc" in
          let mandatory, choose, total =
            let gn = Re.group_names re_within in
-           let g = Re.exec re_within rule in
+           let g =
+             match Re.exec_opt re_within rule with
+             | Some g -> g
+             | None -> failwith ~where "in %s/%d/%s, invalid format for rule '%s'" (row "PA") period block rule
+           in
            Re.Group.get g (List.assoc "obligatoire" gn) = "obligatoire",
            int_of_string @@ Re.Group.get g @@ List.assoc "k" gn,
            int_of_string @@ Re.Group.get g @@ List.assoc "n" gn
